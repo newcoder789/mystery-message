@@ -3,21 +3,29 @@ import UserModel from "@/model/User.model";
 
 import { z } from "zod";
 import { verifySchema } from "@/schemas/verifySchema";
+import { resourceLimits } from "worker_threads";
 
-export async function GET(request:Request){
-    await dbConnect()
+export async function POST(request:Request){
+    await dbConnect();
     try {
         const {username, code} = await request.json()
         // it only work while useing url it is her just to note 
         const decodedUsername = decodeURIComponent(username)
         const user = await UserModel.findOne({username:decodedUsername})
+        const result = verifySchema.safeParse({code:code})
+        if(!result.success){
+			return Response.json({
+				success:true,
+				message:"Invalid Code"
+			},{status:400})
+		}
         if(!user){
             return Response.json({
                 success:false,
                 message:"user not found"
             },{status:500})
         }
-                    
+            
         const isCodeValid = user.verifyCode === code
         const isCodeExpired = new Date(user.verifyCodeExpiry)>new Date()
         if(isCodeExpired && isCodeValid){
