@@ -30,6 +30,6 @@ export const config = {
     '/',
     // /:path*--- this applies middle ware to every path inside these paths
     '/dashboard/:path*',
-    '/verify/:path*'
+      '/verify/:path*'
   ]
 }

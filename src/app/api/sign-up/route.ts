@@ -6,7 +6,7 @@ import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 import { verify } from "crypto";
 
 export async function POST(request:Request){
-    await dbConnect;
+    await dbConnect();    
     try {
         // If existing-User-By-Email   EXISTS   and user name is verified
         const {username, password,email} = await request.json()
@@ -27,7 +27,6 @@ export async function POST(request:Request){
         // If existing-User-By-Email   EXISTS   and email is verified
         const existingUserByEmail = await UserModel.findOne({email})
         const verifyCode = Math.floor(100000+Math.random()*900000).toString()
-
         if(existingUserByEmail){
             if(existingUserByEmail.isVerified){
                 return Response.json({
@@ -40,7 +39,8 @@ export async function POST(request:Request){
                 existingUserByEmail.password = hashedPassword;
                 existingUserByEmail.verifyCode = verifyCode;
                 existingUserByEmail.verifyCodeExpiry = new Date(Date.now() +3600000)
-                await existingUserByEmail.save
+                await existingUserByEmail.save()
+                console.log("User is saved but not verified")
             }
         }else{
             // if user does not exist at all 
@@ -58,12 +58,17 @@ export async function POST(request:Request){
                 isAcceptingMessage:true,
                 messages:[]
             })
-            await newUser.save
+            try {
+                const savedUser = await newUser.save();
+                console.log('User successfully saved:', savedUser);
+              } catch (err) {
+                console.error('Error saving user:', err);
+              }
         }
         // if user exist krta hai or nhi krta tha ab hmne bna diya hai to uski verification ke liye
         // sending verification email
         const emailResponse = await sendVerificationEmail(email,username,verifyCode)
-        if(!email.Response.success){
+        if(!emailResponse.success){
             return Response.json({success:false, message:emailResponse.message},{status:500})
         }
         return Response.json({

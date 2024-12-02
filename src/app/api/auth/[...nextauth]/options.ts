@@ -67,6 +67,7 @@ export const authOptions:NextAuthOptions = {
             return session
         },
     },
+    // pages will change default route like in nextjs it will change it from auth/sign-in to /sign-in
     pages:{
         // we are not only defining routes , but we will not even have to design these pages
         signIn:'/sign-in'
