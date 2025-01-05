@@ -28,7 +28,7 @@
     "next-auth": "^4.24.10",
     "openai": "^4.73.1",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0",
     "react-email": "^3.0.2",
     "react-email-components": "^0.1.13",
     "react-hook-form": "^7.53.2",
